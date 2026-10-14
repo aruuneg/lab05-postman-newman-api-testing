@@ -1,78 +1,212 @@
-Лаборатори №5: API системийн тест – Postman ба Newman
-
-Оюутны мэдээлэл
-
-Нэр: ANAR BATBOLD
-
-Оюутны код: B170910823
-
-Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
-
-Ашигласан хэрэгслүүд
-
-Node.js
-
-Postman
-
-Newman
-
-GitHub
-
-Туршилтын систем
-
-Энэхүү лабораторийн ажлаар хичээл бүртгэлийн REST API системийг тестэлсэн.
+\# Лаборатори №5: API системийн тест – Postman ба Newman
 
 
 
-Систем нь дараах endpoint-уудтай.
+\## Оюутны мэдээлэл
 
 
 
-Students
+\- Нэр: ANAR BATBOLD
+
+\- Код: B170910823
+
+\- Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
+
+
+
+\---
+
+
+
+\## Ашигласан орчин
+
+
+
+\### Node.js
+
+
+
+```text
+
+v24.19.0
+
+```
+
+
+
+\### Newman
+
+
+
+```text
+
+6.2.2
+
+```
+
+
+
+\### Ашигласан хэрэгслүүд
+
+
+
+\- Node.js
+
+\- Postman
+
+\- Newman
+
+\- Git
+
+\- GitHub
+
+
+
+\---
+
+
+
+\# Туршилтын систем
+
+
+
+Систем нь хичээл бүртгэлийн REST API юм.
+
+
+
+\### Endpoint-ууд
+
+
+
+```http
 
 PUT /students/:id
-
-Courses
 
 PUT /courses/:id
 
 GET /courses/:id
 
-Registrations
-
 POST /registrations
 
 GET /registrations
 
-Тестийн сценарионууд
+```
 
-Эерэг тестүүд
 
-Create Student
 
-Create Course
+\---
 
-Create Registration
 
-Get Registrations
 
-Get Course
+\# Сонголт ба төлөөлөх утгууд
 
-Сөрөг тестүүд
 
-Register Unknown Student
 
-Register Unknown Course
+| Параметр | Утга |
 
-Register Missing Prerequisite
+|----------|----------|
 
-Infrastructure тест
+| Student | Valid, Unknown |
 
-Server Down Scenario
+| Course | Valid, Unknown |
 
-PASS Scenario
+| Student Status | Active, Inactive |
 
-Create Student
+| Prerequisite | Satisfied, Missing |
+
+| Server | Running, Down |
+
+
+
+\---
+
+
+
+\# Спецификацийн хүснэгт
+
+
+
+| # | Student | Course | Status | Prerequisite | Expected Result |
+
+|---|---|---|---|---|---|
+
+| 1 | Valid | Valid | Active | Satisfied | OK |
+
+| 2 | Unknown | Valid | Active | Satisfied | ERROR\_NO\_STUDENT |
+
+| 3 | Valid | Unknown | Active | Satisfied | ERROR\_NO\_COURSE |
+
+| 4 | Valid | Valid | Active | Missing | ERROR\_PREREQUISITES |
+
+| 5 | Valid | Valid | Active | Satisfied | Registration Created |
+
+| 6 | Valid | Valid | Active | Satisfied | Registration List Returned |
+
+| 7 | Valid | Valid | Active | Satisfied | Course Returned |
+
+| 8 | Valid | Valid | Active | Satisfied | Newman PASS Run |
+
+| 9 | Valid | Valid | Active | Satisfied | Server DOWN Scenario |
+
+
+
+\---
+
+
+
+\# Collection-д хэрэгжүүлсэн тестүүд
+
+
+
+\### Эерэг тестүүд
+
+
+
+1\. Create Student
+
+2\. Create Course
+
+3\. Create Registration
+
+4\. Get Registrations
+
+5\. Get Course
+
+
+
+\### Сөрөг тестүүд
+
+
+
+6\. Register Unknown Student
+
+7\. Register Unknown Course
+
+8\. Register Missing Prerequisite
+
+
+
+\### Дэд бүтцийн тест
+
+
+
+9\. Server DOWN Scenario
+
+
+
+\---
+
+
+
+\# PASS ажиллуулалт
+
+
+
+\## Create Student
+
+
+
+```json
 
 {
 
@@ -80,7 +214,15 @@ Create Student
 
 }
 
-Create Course
+```
+
+
+
+\## Create Course
+
+
+
+```json
 
 {
 
@@ -88,7 +230,15 @@ Create Course
 
 }
 
-Create Registration
+```
+
+
+
+\## Create Registration
+
+
+
+```json
 
 {
 
@@ -98,7 +248,15 @@ Create Registration
 
 }
 
-Get Registrations
+```
+
+
+
+\## Get Registrations
+
+
+
+```json
 
 \[
 
@@ -124,51 +282,87 @@ Get Registrations
 
 ]
 
-Newman PASS Run
-
-iterations executed: 1
-
-iterations failed: 0
+```
 
 
 
-assertions executed: 20
-
-assertions failed: 0
-
-PASS Үр Дүн
-
-Үзүүлэлт	Утга
-
-Assertions	20
-
-Failed Assertions	0
-
-Iterations	1
-
-Failed Iterations	0
-
-Бүх assertion амжилттай ажилласан.
+\### Newman PASS Run
 
 
 
-FAIL Scenario
+```text
 
-FAIL тест хийхийн тулд нэг assertion-ыг зориудаар өөрчилсөн.
+Iterations executed: 1
+
+Iterations failed: 0
 
 
 
-Анхны assertion
+Assertions executed: 20
+
+Assertions failed: 0
+
+```
+
+
+
+\### Exit Code
+
+
+
+```text
+
+0
+
+```
+
+
+
+PASS ажиллуулалтын үед бүх assertion амжилттай болсон.
+
+
+
+\---
+
+
+
+\# FAIL ажиллуулалт
+
+
+
+FAIL хувилбарт дараах assertion зориудаар өөрчилсөн.
+
+
+
+Анхны assertion:
+
+
+
+```javascript
 
 pm.expect(pm.response.json().result).to.eql("OK");
 
-Өөрчилсөн assertion
+```
+
+
+
+Өөрчилсөн assertion:
+
+
+
+```javascript
 
 pm.expect(pm.response.json().result).to.eql("SUCCESS");
+
+```
+
+
 
 Бодит response:
 
 
+
+```json
 
 {
 
@@ -176,73 +370,121 @@ pm.expect(pm.response.json().result).to.eql("SUCCESS");
 
 }
 
-учир assertion зориудаар FAIL болсон.
+```
 
 
 
-Newman FAIL Run
-
-assertions executed: 20
-
-assertions failed: 1
-
-FAIL Үр Дүн
-
-Үзүүлэлт	Утга
-
-Assertions	20
-
-Failed Assertions	1
-
-Энэ нь Newman буруу хүлээлтийг амжилттай илрүүлж байгааг харуулсан.
+учир assertion FAIL болсон.
 
 
 
-Server Down Scenario
-
-Серверийг зогсоосны дараа Collection-ийг Newman ашиглан дахин ажиллуулсан.
+\### Newman FAIL Run
 
 
 
-Үр Дүн
+```text
+
+Assertions executed: 20
+
+Assertions failed: 1
+
+```
+
+
+
+\### Exit Code
+
+
+
+```text
+
+1
+
+```
+
+
+
+Энэ нь Newman алдаатай expectation-ийг зөв илрүүлж байгааг харуулсан.
+
+
+
+\---
+
+
+
+\# Server DOWN ажиллуулалт
+
+
+
+Серверийг зогсоосны дараа collection-ийг дахин ажиллуулсан.
+
+
+
+\### Үр дүн
+
+
+
+```text
 
 connect ECONNREFUSED 127.0.0.1:3000
 
-алдаа олон удаа бүртгэгдсэн.
+```
 
 
 
-Тайлбар
-
-API сервер унтарсан үед Newman хүсэлтүүдийг гүйцэтгэж чадалгүй:
+\### Exit Code
 
 
 
-ECONNREFUSED
+```text
 
-алдаа гаргасан.
+1
 
-
-
-Энэ нь системийн дэд бүтэц болон холболтын асуудлыг илрүүлэх боломжтойг харуулсан.
+```
 
 
 
-API Error Scenario-ууд
+Сервер ажиллахгүй үед Newman хүсэлтүүдийг гүйцэтгэж чадахгүй байсныг харуулсан.
+
+
+
+\---
+
+
+
+\# Oracle алдаа ба Infrastructure алдаа
+
+
+
+\## Oracle / Business Rule Errors
+
+
+
+Дараах алдаанууд нь системийн бизнес дүрэмтэй холбоотой.
+
+
+
+```text
 
 ERROR\_NO\_STUDENT
 
-Request
+ERROR\_NO\_COURSE
 
-{
+ERROR\_PREREQUISITES
 
-&#x20; "studentID": "UNKNOWN",
+```
 
-&#x20; "courseID": "CS313"
 
-}
 
-Response
+Эдгээр нь API ажиллаж байгаа боловч хэрэглэгчийн өгсөн өгөгдөл бизнес дүрэм зөрчсөн үед буцаж байна.
+
+
+
+\### ERROR\_NO\_STUDENT
+
+
+
+```json
 
 {
 
@@ -250,19 +492,15 @@ Response
 
 }
 
-ERROR\_NO\_COURSE
+```
 
-Request
 
-{
 
-&#x20; "studentID": "B231234567",
+\### ERROR\_NO\_COURSE
 
-&#x20; "courseID": "UNKNOWN"
 
-}
 
-Response
+```json
 
 {
 
@@ -270,19 +508,15 @@ Response
 
 }
 
-ERROR\_PREREQUISITES
+```
 
-Request
 
-{
 
-&#x20; "studentID": "B000000001",
+\### ERROR\_PREREQUISITES
 
-&#x20; "courseID": "CS313"
 
-}
 
-Response
+```json
 
 {
 
@@ -296,41 +530,71 @@ Response
 
 }
 
-Энэ туршилт нь prerequisite шалгалт зөв ажиллаж байгааг баталсан.
+```
 
 
 
-Newman Results Summary
-
-PASS Run
-
-Үзүүлэлт	Утга
-
-Assertions	20
-
-Failed	0
-
-FAIL Run
-
-Үзүүлэлт	Утга
-
-Assertions	20
-
-Failed	1
-
-DOWN Run
-
-Үзүүлэлт	Утга
-
-Network Error	ECONNREFUSED
-
-Дүгнэлт
-
-Энэхүү лабораторийн ажлаар REST API системийг Postman болон Newman ашиглан тестэллээ. API-ийн үндсэн бизнес үйлдлүүд болох оюутан үүсгэх, хичээл үүсгэх, хичээлд бүртгүүлэх болон бүртгэлийн жагсаалт авах үйлдлүүдийг шалгасан. Мөн оюутан байхгүй, хичээл байхгүй болон prerequisite хангагдаагүй нөхцөлүүдийг туршиж бизнес дүрмүүд зөв хэрэгжиж байгааг баталгаажуулсан. Postman ашиглан request болон response-уудыг шалгаж assertion-ууд үүсгэсэн. Newman ашиглан collection-ийг автоматаар ажиллуулж API тестийг командын мөрөөс гүйцэтгэсэн. PASS run үед бүх 20 assertion амжилттай болсон. FAIL run үед зориудаар өөрчилсөн assertion алдаа илрүүлж 1 failure бүртгэсэн. Server Down scenario үед Newman ECONNREFUSED алдааг илрүүлсэн. Энэ нь зөвхөн функциональ тест төдийгүй системийн найдвартай ажиллагааг шалгах боломжтойг харуулсан. Лабораторийн ажлын үр дүнд Postman Collection болон Newman Automation ашиглан API системийн тестийг хэрэгжүүлж сурлаа.
+\---
 
 
 
-Хавсаргасан файлууд
+\## Infrastructure Error
+
+
+
+```text
+
+connect ECONNREFUSED 127.0.0.1:3000
+
+```
+
+
+
+Энэ нь бизнес дүрмийн алдаа биш бөгөөд сервер ажиллахгүй байгаа сүлжээний түвшний алдаа юм.
+
+
+
+\---
+
+
+
+\# Үр дүнгийн харьцуулалт
+
+
+
+| Scenario | Assertions | Failed Assertions | Exit Code |
+
+|----------|----------|----------|----------|
+
+| PASS | 20 | 0 | 0 |
+
+| FAIL | 20 | 1 | 1 |
+
+| DOWN | N/A | Connection Error | 1 |
+
+
+
+\---
+
+
+
+\# Дүгнэлт
+
+
+
+Энэхүү лабораторийн ажлаар REST API системийг Postman болон Newman ашиглан тестэллээ. API-ийн үндсэн бизнес үйлдлүүд болох оюутан үүсгэх, хичээл үүсгэх, хичээлд бүртгүүлэх болон бүртгэлийн жагсаалт авах үйлдлүүдийг шалгасан. Сөрөг тестүүдийн хүрээнд үл мэдэгдэх оюутан, үл мэдэгдэх хичээл болон prerequisite хангагдаагүй нөхцөлүүдийг туршсан. Postman ашиглан request болон response бүрт assertion-ууд үүсгэж шалгасан. Newman ашиглан collection-ийг командын мөрөөс автоматаар ажиллуулсан. PASS ажиллуулалтын үед бүх 20 assertion амжилттай болсон. FAIL ажиллуулалтын үед зориудаар буруу expectation ашиглаж 1 assertion FAIL болгосон. Серверийг унтраасан үед Newman ECONNREFUSED алдааг илрүүлсэн. Бизнес дүрмийн алдаа болон дэд бүтцийн алдааг тусад нь ялгаж шинжилсэн. Лабораторийн ажлын үр дүнд API системийн функциональ болон автомат тестийг Postman ба Newman ашиглан хэрэгжүүлж сурлаа.
+
+
+
+\---
+
+
+
+\# Хавсаргасан файлууд
+
+
+
+```text
 
 server.js
 
@@ -342,9 +606,13 @@ lab05-collection-fail.json
 
 
 
-results/newman-pass.txt
+results/
 
-results/newman-fail.txt
+├── newman-pass.txt
 
-results/newman-down.txt
+├── newman-fail.txt
+
+└── newman-down.txt
+
+
 
