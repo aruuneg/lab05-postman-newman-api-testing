@@ -1,618 +1,76 @@
-\# Лаборатори №5: API системийн тест – Postman ба Newman
+# Лаборатори №5: API системийн тест — Postman ба Newman
 
+## Оюутны мэдээлэл
 
+- Нэр: ANAR BATBOLD
+- Код: B170910823
+- Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
 
-\## Оюутны мэдээлэл
+## Ашигласан орчин
 
+| Команд | Гаралт |
+|---|---|
+| `node -v` | `v24.19.0` |
+| `newman -v` | `6.2.2` |
 
+API-г `node server.js` командаар ажиллуулна. Newman collection-ийн `baseUrl` хувьсагч нь `http://localhost:3000` утгатай.
 
-\- Нэр: ANAR BATBOLD
+## Сонголт ба төлөөлөх утгууд
 
-\- Код: B170910823
+| Сонголт | Төлөөлөх утгууд |
+|---|---|
+| Оюутны ID | Байгаа (`B2312345001`), байхгүй (`UNKNOWN002`), талбар дутуу |
+| Оюутны төлөв | Идэвхтэй (`active`), идэвхгүй (`inactive`) |
+| `coursesTaken` | Бүх урьдач хангана (`["CS201","CS202"]`), заримыг хангана (`["CS201"]`), хоосон (`[]`) |
+| Хичээлийн ID | Байгаа (`CS313`), байхгүй (`UNKNOWN004`), талбар дутуу |
+| `prerequisites` | Бүгд хангагдсан (`["CS201"]`), зарим нь хангагдаагүй (`["CS201","CS202"]`), байхгүй (`[]`) |
+| Хүсэлтийн формат | Хүчинтэй JSON, шаардлагатай талбар дутуу, буруу JSON (`{`) |
 
-\- Хичээл: F.CSA313 Программ хангамжийн чанарын баталгаа ба тест
+`studentID` байхгүй бол тухайн оюутны төлөвийг мэдэх боломжгүй учраас “байхгүй оюутан + идэвхгүй оюутан” нь утгын хувьд боломжгүй хослол. Харин идэвхгүй оюутан + байхгүй хичээл гэсэн хоёр алдааг зориудаар хослуулж шалгасан.
 
+## Спецификацийн хүснэгт
 
+Collection-д доорх 11 тохиолдол тус бүр өөрийн `PUT /students/:id`, `PUT /courses/:id` setup-ийг ажиллуулаад `POST /registrations` хүсэлт илгээнэ. Тест бүр өөрийн оюутны бичлэгийг үүсгэдэг; байхгүй оюутан/хичээлийн кейсүүд зөвхөн POST-ийн target-ийг тохирохгүй ID-аар өгнө. Бүх POST тест статус болон `result`-ийг шалгана.
 
-\---
+| # | Спецификаци | Setup / оролт | Хүлээгдэх статус | Хүлээгдэх `result` |
+|---:|---|---|---:|---|
+| 1 | Амжилттай бүртгэл | Идэвхтэй, CS201 үзсэн; CS313-ийн цорын ганц урьдач CS201 | 201 | `OK` |
+| 2 | Оюутан байхгүй | Идэвхтэй оюутан болон CS313 setup; POST-д `UNKNOWN002` | 200 | `ERROR_NO_STUDENT` |
+| 3 | Идэвхгүй оюутан | `status: inactive`; урьдач хангагдсан | 200 | `ERROR_INACTIVE_STUDENT` |
+| 4 | Хичээл байхгүй | Идэвхтэй оюутан setup; POST-д `UNKNOWN004` | 200 | `ERROR_NO_COURSE` |
+| 5 | Урьдач нөхцөл огт хангаагүй | `coursesTaken: []`, CS313-ийн урьдач `CS201` | 200 | `ERROR_PREREQUISITES` (`missing: ["CS201"]`) |
+| 6 | `studentID` талбар дутуу | `courseID: CS313`-тай хүчинтэй JSON | 400 | `ERROR_BAD_REQUEST` |
+| 7 | `courseID` талбар дутуу | `studentID`-тай хүчинтэй JSON | 400 | `ERROR_BAD_REQUEST` |
+| 8 | Урьдачгүй хичээл, хоосон үзсэн жагсаалт | `coursesTaken: []`, `prerequisites: []` | 201 | `OK` |
+| 9 | Буруу JSON | POST body `{` | 400 | `ERROR_BAD_JSON` |
+| 10 | Давхар алдаа: идэвхгүй оюутан + байхгүй хичээл | Идэвхгүй оюутан setup; POST-д `UNKNOWN010` | 200 | `ERROR_INACTIVE_STUDENT` (шалгалтын дарааллын дагуу) |
+| 11 | Урьдачийн заримыг л үзсэн | `coursesTaken: ["CS201"]`; prerequisites `["CS201","CS202"]` | 200 | `ERROR_PREREQUISITES` (`missing: ["CS202"]`) |
 
+Амжилттай тохиолдолд `registrationID`-ийн яг утгыг бус, тоон утга эсэхийг шалгана. Иймээс серверийг дахин асаахгүйгээр collection-ийг давтан ажиллуулахад ч тестүүд бие даан ажиллана.
 
+## Newman ажиллуулалтын үр дүн
 
-\## Ашигласан орчин
+`results/` доторх гурван файл Newman-ийн бүтэн CLI гаралт болон процессын exit code-ийг агуулна. Файлууд UTF-8 (BOM-гүй) кодчилолтой.
 
+| Ажиллуулалт | Iterations (executed/failed) | Requests (executed/failed) | Assertions (executed/failed) | Exit code |
+|---|---:|---:|---:|---:|
+| PASS — `results/newman-pass.txt` | 1 / 0 | 33 / 0 | 70 / 0 | 0 |
+| FAIL — `results/newman-fail.txt` | 1 / 0 | 33 / 0 | 70 / 1 | 1 |
+| DOWN — `results/newman-down.txt` | 1 / 0 | 33 / 33 | 70 / 70 | 1 |
 
+PASS ажиллуулалтаар 11 бие даасан кейс бүрийн хоёр setup хүсэлт болон бүртгэлийн POST шалгагдсан; `results/newman-pass.txt`-ийн `assertions` мөр 70 executed, 0 failed гэж батална. FAIL хувилбарт тусдаа `lab05-collection-fail.json` collection-ийн амжилттай кейсийн `result` oracle-ийг зориудаар буруу (`EXPECTED_WRONG_RESULT`) болгосон тул зөвхөн тэр нэг assertion унаж, exit code 1 гарсан; үндсэн collection өөрчлөгдөөгүй. DOWN ажиллуулалтаас өмнө серверийг зогсоосон бөгөөд 33 хүсэлт бүгд `ECONNREFUSED 127.0.0.1:3000` интерфейсийн алдаатай болсон. Интерфейсийн алдаа нь серверээс хариу ирээгүй гэсэн үг, харин oracle-ийн алдаа нь сервер хариу өгсөн ч хүлээгдсэн статус эсвэл утгатай зөрсөн гэсэн үг.
 
-\### Node.js
+Windows PowerShell-ээс тайланг UTF-8-аар үүсгэх жишээ:
 
-
-
-```text
-
-v24.19.0
-
+```powershell
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+& $env:ComSpec /d /c 'newman run lab05-collection.json --disable-unicode > results\newman-pass.txt 2>&1'
+$exitCode = $LASTEXITCODE
+[IO.File]::AppendAllText((Resolve-Path 'results\newman-pass.txt'), "`r`nProcess exit code: $exitCode`r`n", $utf8)
 ```
 
+FAIL-д `lab05-collection-fail.json`-ийг ашиглана. DOWN-д серверийг унтраасны дараа `lab05-collection.json`-ийг ашиглана. `$LASTEXITCODE`-ийг шууд Newman ажиллуулсны дараа хадгалах нь чухал.
 
+## Дүгнэлт
 
-\### Newman
-
-
-
-```text
-
-6.2.2
-
-```
-
-
-
-\### Ашигласан хэрэгслүүд
-
-
-
-\- Node.js
-
-\- Postman
-
-\- Newman
-
-\- Git
-
-\- GitHub
-
-
-
-\---
-
-
-
-\# Туршилтын систем
-
-
-
-Систем нь хичээл бүртгэлийн REST API юм.
-
-
-
-\### Endpoint-ууд
-
-
-
-```http
-
-PUT /students/:id
-
-PUT /courses/:id
-
-GET /courses/:id
-
-POST /registrations
-
-GET /registrations
-
-```
-
-
-
-\---
-
-
-
-\# Сонголт ба төлөөлөх утгууд
-
-
-
-| Параметр | Утга |
-
-|----------|----------|
-
-| Student | Valid, Unknown |
-
-| Course | Valid, Unknown |
-
-| Student Status | Active, Inactive |
-
-| Prerequisite | Satisfied, Missing |
-
-| Server | Running, Down |
-
-
-
-\---
-
-
-
-\# Спецификацийн хүснэгт
-
-
-
-| # | Student | Course | Status | Prerequisite | Expected Result |
-
-|---|---|---|---|---|---|
-
-| 1 | Valid | Valid | Active | Satisfied | OK |
-
-| 2 | Unknown | Valid | Active | Satisfied | ERROR\_NO\_STUDENT |
-
-| 3 | Valid | Unknown | Active | Satisfied | ERROR\_NO\_COURSE |
-
-| 4 | Valid | Valid | Active | Missing | ERROR\_PREREQUISITES |
-
-| 5 | Valid | Valid | Active | Satisfied | Registration Created |
-
-| 6 | Valid | Valid | Active | Satisfied | Registration List Returned |
-
-| 7 | Valid | Valid | Active | Satisfied | Course Returned |
-
-| 8 | Valid | Valid | Active | Satisfied | Newman PASS Run |
-
-| 9 | Valid | Valid | Active | Satisfied | Server DOWN Scenario |
-
-
-
-\---
-
-
-
-\# Collection-д хэрэгжүүлсэн тестүүд
-
-
-
-\### Эерэг тестүүд
-
-
-
-1\. Create Student
-
-2\. Create Course
-
-3\. Create Registration
-
-4\. Get Registrations
-
-5\. Get Course
-
-
-
-\### Сөрөг тестүүд
-
-
-
-6\. Register Unknown Student
-
-7\. Register Unknown Course
-
-8\. Register Missing Prerequisite
-
-
-
-\### Дэд бүтцийн тест
-
-
-
-9\. Server DOWN Scenario
-
-
-
-\---
-
-
-
-\# PASS ажиллуулалт
-
-
-
-\## Create Student
-
-
-
-```json
-
-{
-
-&#x20; "result": "OK"
-
-}
-
-```
-
-
-
-\## Create Course
-
-
-
-```json
-
-{
-
-&#x20; "result": "OK"
-
-}
-
-```
-
-
-
-\## Create Registration
-
-
-
-```json
-
-{
-
-&#x20; "result": "OK",
-
-&#x20; "registrationID": 2
-
-}
-
-```
-
-
-
-\## Get Registrations
-
-
-
-```json
-
-\[
-
-&#x20; {
-
-&#x20;   "registrationID": 1,
-
-&#x20;   "studentID": "B231234567",
-
-&#x20;   "courseID": "CS313"
-
-&#x20; },
-
-&#x20; {
-
-&#x20;   "registrationID": 2,
-
-&#x20;   "studentID": "B231234567",
-
-&#x20;   "courseID": "CS313"
-
-&#x20; }
-
-]
-
-```
-
-
-
-\### Newman PASS Run
-
-
-
-```text
-
-Iterations executed: 1
-
-Iterations failed: 0
-
-
-
-Assertions executed: 20
-
-Assertions failed: 0
-
-```
-
-
-
-\### Exit Code
-
-
-
-```text
-
-0
-
-```
-
-
-
-PASS ажиллуулалтын үед бүх assertion амжилттай болсон.
-
-
-
-\---
-
-
-
-\# FAIL ажиллуулалт
-
-
-
-FAIL хувилбарт дараах assertion зориудаар өөрчилсөн.
-
-
-
-Анхны assertion:
-
-
-
-```javascript
-
-pm.expect(pm.response.json().result).to.eql("OK");
-
-```
-
-
-
-Өөрчилсөн assertion:
-
-
-
-```javascript
-
-pm.expect(pm.response.json().result).to.eql("SUCCESS");
-
-```
-
-
-
-Бодит response:
-
-
-
-```json
-
-{
-
-&#x20; "result": "OK"
-
-}
-
-```
-
-
-
-учир assertion FAIL болсон.
-
-
-
-\### Newman FAIL Run
-
-
-
-```text
-
-Assertions executed: 20
-
-Assertions failed: 1
-
-```
-
-
-
-\### Exit Code
-
-
-
-```text
-
-1
-
-```
-
-
-
-Энэ нь Newman алдаатай expectation-ийг зөв илрүүлж байгааг харуулсан.
-
-
-
-\---
-
-
-
-\# Server DOWN ажиллуулалт
-
-
-
-Серверийг зогсоосны дараа collection-ийг дахин ажиллуулсан.
-
-
-
-\### Үр дүн
-
-
-
-```text
-
-connect ECONNREFUSED 127.0.0.1:3000
-
-```
-
-
-
-\### Exit Code
-
-
-
-```text
-
-1
-
-```
-
-
-
-Сервер ажиллахгүй үед Newman хүсэлтүүдийг гүйцэтгэж чадахгүй байсныг харуулсан.
-
-
-
-\---
-
-
-
-\# Oracle алдаа ба Infrastructure алдаа
-
-
-
-\## Oracle / Business Rule Errors
-
-
-
-Дараах алдаанууд нь системийн бизнес дүрэмтэй холбоотой.
-
-
-
-```text
-
-ERROR\_NO\_STUDENT
-
-ERROR\_NO\_COURSE
-
-ERROR\_PREREQUISITES
-
-```
-
-
-
-Эдгээр нь API ажиллаж байгаа боловч хэрэглэгчийн өгсөн өгөгдөл бизнес дүрэм зөрчсөн үед буцаж байна.
-
-
-
-\### ERROR\_NO\_STUDENT
-
-
-
-```json
-
-{
-
-&#x20; "result": "ERROR\_NO\_STUDENT"
-
-}
-
-```
-
-
-
-\### ERROR\_NO\_COURSE
-
-
-
-```json
-
-{
-
-&#x20; "result": "ERROR\_NO\_COURSE"
-
-}
-
-```
-
-
-
-\### ERROR\_PREREQUISITES
-
-
-
-```json
-
-{
-
-&#x20; "result": "ERROR\_PREREQUISITES",
-
-&#x20; "missing": \[
-
-&#x20;   "CS201"
-
-&#x20; ]
-
-}
-
-```
-
-
-
-\---
-
-
-
-\## Infrastructure Error
-
-
-
-```text
-
-connect ECONNREFUSED 127.0.0.1:3000
-
-```
-
-
-
-Энэ нь бизнес дүрмийн алдаа биш бөгөөд сервер ажиллахгүй байгаа сүлжээний түвшний алдаа юм.
-
-
-
-\---
-
-
-
-\# Үр дүнгийн харьцуулалт
-
-
-
-| Scenario | Assertions | Failed Assertions | Exit Code |
-
-|----------|----------|----------|----------|
-
-| PASS | 20 | 0 | 0 |
-
-| FAIL | 20 | 1 | 1 |
-
-| DOWN | N/A | Connection Error | 1 |
-
-
-
-\---
-
-
-
-\# Дүгнэлт
-
-
-
-Энэхүү лабораторийн ажлаар REST API системийг Postman болон Newman ашиглан тестэллээ. API-ийн үндсэн бизнес үйлдлүүд болох оюутан үүсгэх, хичээл үүсгэх, хичээлд бүртгүүлэх болон бүртгэлийн жагсаалт авах үйлдлүүдийг шалгасан. Сөрөг тестүүдийн хүрээнд үл мэдэгдэх оюутан, үл мэдэгдэх хичээл болон prerequisite хангагдаагүй нөхцөлүүдийг туршсан. Postman ашиглан request болон response бүрт assertion-ууд үүсгэж шалгасан. Newman ашиглан collection-ийг командын мөрөөс автоматаар ажиллуулсан. PASS ажиллуулалтын үед бүх 20 assertion амжилттай болсон. FAIL ажиллуулалтын үед зориудаар буруу expectation ашиглаж 1 assertion FAIL болгосон. Серверийг унтраасан үед Newman ECONNREFUSED алдааг илрүүлсэн. Бизнес дүрмийн алдаа болон дэд бүтцийн алдааг тусад нь ялгаж шинжилсэн. Лабораторийн ажлын үр дүнд API системийн функциональ болон автомат тестийг Postman ба Newman ашиглан хэрэгжүүлж сурлаа.
-
-
-
-\---
-
-
-
-\# Хавсаргасан файлууд
-
-
-
-```text
-
-server.js
-
-
-
-lab05-collection.json
-
-lab05-collection-fail.json
-
-
-
-results/
-
-├── newman-pass.txt
-
-├── newman-fail.txt
-
-└── newman-down.txt
-
-
-
+Энэ лабораторид тест дизайны бие даасан функц, сонголт, төлөөлөх утга, спецификаци, бодит кейс гэсэн таван алхмыг хэрэгжүүллээ. Сонголт болон төлөөлөх утгыг тодорхойлох нь хамгийн их бодол шаардсан. Байхгүй оюутанд идэвхтэй эсвэл идэвхгүй төлөв оноох боломжгүй тул тэр хослолыг тестийн тохиолдол болгоогүй. Харин идэвхгүй оюутан болон байхгүй хичээлийг хослуулахад API шалгалтын дарааллаар `ERROR_INACTIVE_STUDENT` буцааж байгааг шалгасан. Урьдач нөхцөлийн хэсэгчилсэн тохиолдолд зөвхөн `CS202` дутууг oracle-оор баталгаажуулсан. PASS ажиллуулалтад 70 assertion бүгд амжилттай болж, хамарсан функцүүдэд урьдчилан мэдэгдээгүй согог илрээгүй. FAIL collection-д буруу oracle оруулахад Newman нэг assertion-ийг унагаж exit code 1 өгсөн. Серверийг унтраасан DOWN ажиллуулалт `ECONNREFUSED` болон exit code 1 өгсөн бөгөөд үүнийг хариу өгсөн API-ийн oracle алдаанаас тусад нь тайлбарлав. Ийнхүү хүсэлт/хариуны шалгалт болон CI quality gate-д exit code хэрэглэхийн ялгааг харууллаа.

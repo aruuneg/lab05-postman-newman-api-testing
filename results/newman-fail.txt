@@ -1,85 +1,213 @@
-﻿node.exe : (node:2704) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
-At C:\Users\hitech\AppData\Roaming\npm\newman.ps1:24 char:5
-+     & "node$exe"  "$basedir/node_modules/newman/bin/newman.js" $args
-+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ((node:2704) [DE...ts.F_OK instead:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+(node:8216) [DEP0176] DeprecationWarning: fs.F_OK is deprecated, use fs.constants.F_OK instead
 (Use `node --trace-deprecation ...` to show where the warning was created)
 newman
 
 Lab05 Registration API FAIL
 
-ΓåÆ Create student
-  PUT http://localhost:3000/students/B231234567 [200 OK, 178B, 14ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  Student created
+Folder 01 Successful registration
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345001 [200 OK, 178B, 14ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
 
-ΓåÆ Create Course
-  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  Course created
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
 
-ΓåÆ Create Registration
+Sub-folder POST registration
   POST http://localhost:3000/registrations [201 Created, 202B, 1ms]
-  ΓêÜ  Status code is 201
-  1. Registration successful
-  ΓêÜ  Registration ID exists
+  Pass  HTTP 201
+  1. result EXPECTED_WRONG_RESULT
+  Pass  registrationID is a number
 
-ΓåÆ Get Registrations
-  GET http://localhost:3000/registrations [200 OK, 424B, 1ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  Response is array
-  ΓêÜ  At least one registration exists
+Folder 02 Student does not exist
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345002 [200 OK, 178B, 2ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
 
-ΓåÆ Register Unknown Student NEW
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
   POST http://localhost:3000/registrations [200 OK, 192B, 1ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  ERROR_NO_STUDENT returned
+  Pass  HTTP 200
+  Pass  result ERROR_NO_STUDENT
 
-ΓåÆ Register Unknown Course
+Folder 03 Inactive student
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345003 [200 OK, 178B, 2ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [200 OK, 198B, 3ms]
+  Pass  HTTP 200
+  Pass  result ERROR_INACTIVE_STUDENT
+
+Folder 04 Course does not exist
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345004 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
   POST http://localhost:3000/registrations [200 OK, 191B, 1ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  ERROR_NO_COURSE returned
+  Pass  HTTP 200
+  Pass  result ERROR_NO_COURSE
 
-ΓåÆ Create New Student Without Prerequisites
-  PUT http://localhost:3000/students/B000000001 [200 OK, 178B, 1ms]
-  ΓêÜ  Student created
+Folder 05 Missing prerequisite
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345005 [200 OK, 178B, 2ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
 
-ΓåÆ Register Missing Prerequisite
-  POST http://localhost:3000/registrations [200 OK, 215B, 2ms]
-  ΓêÜ  ERROR_PREREQUISITES returned
-  ΓêÜ  Missing prerequisite exists
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
 
-ΓåÆ Get Course
-  GET http://localhost:3000/courses/CS313 [200 OK, 209B, 1ms]
-  ΓêÜ  Status code is 200
-  ΓêÜ  Course ID is CS313
-  ΓêÜ  Prerequisite exists
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [200 OK, 215B, 1ms]
+  Pass  HTTP 200
+  Pass  result ERROR_PREREQUISITES
+  Pass  Missing prerequisite is reported
 
-ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö¼ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö¼ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
-Γöé                         Γöé        executed Γöé          failed Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé              iterations Γöé               1 Γöé               0 Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé                requests Γöé               9 Γöé               0 Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé            test-scripts Γöé               9 Γöé               0 Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé      prerequest-scripts Γöé               0 Γöé               0 Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö╝ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé              assertions Γöé              20 Γöé               1 Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö┤ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓö┤ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé total run duration: 809ms                                   Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé total data received: 495B (approx)                          Γöé
-Γö£ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöñ
-Γöé average response time: 2ms [min: 1ms, max: 14ms, s.d.: 4ms] Γöé
-ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+Folder 06 Missing studentID
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345006 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
 
-[31m  # [39m[31m failure        [39m[31m detail                                  [39m
-[90m    [39m[90m                [39m[90m                                         [39m
- 1.  AssertionError  Registration successful                 
-                     expected 'OK' to deeply equal 'SUCCESS' 
-                     at assertion:1 in test-script           
-                     inside "Create Registration"            
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 1ms]
+  Pass  HTTP 400
+  Pass  result ERROR_BAD_REQUEST
+
+Folder 07 Missing courseID
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345007 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [400 Bad Request, 202B, 1ms]
+  Pass  HTTP 400
+  Pass  result ERROR_BAD_REQUEST
+
+Folder 08 No prerequisites and empty coursesTaken
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345008 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [201 Created, 202B, 1ms]
+  Pass  HTTP 201
+  Pass  result OK
+  Pass  registrationID is a number
+
+Folder 09 Malformed JSON
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345009 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [400 Bad Request, 199B, 1ms]
+  Pass  HTTP 400
+  Pass  result ERROR_BAD_JSON
+
+Folder 10 Inactive student and unknown course
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345010 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 2ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [200 OK, 198B, 1ms]
+  Pass  HTTP 200
+  Pass  Inactive status has precedence
+
+Folder 11 Partial prerequisite coverage
+Sub-folder Setup student
+  PUT http://localhost:3000/students/B2312345011 [200 OK, 178B, 1ms]
+  Pass  Student setup: HTTP 200
+  Pass  Student setup: result OK
+
+Sub-folder Setup course
+  PUT http://localhost:3000/courses/CS313 [200 OK, 178B, 1ms]
+  Pass  Course setup: HTTP 200
+  Pass  Course setup: result OK
+
+Sub-folder POST registration
+  POST http://localhost:3000/registrations [200 OK, 215B, 1ms]
+  Pass  HTTP 200
+  Pass  Missing prerequisite result
+  Pass  Only CS202 is missing
+
+---------------------------------------------------------------
+|                         |        executed |          failed |
+--------------------------+-----------------+------------------
+|              iterations |               1 |               0 |
+--------------------------+-----------------+------------------
+|                requests |              33 |               0 |
+--------------------------+-----------------+------------------
+|            test-scripts |              33 |               0 |
+--------------------------+-----------------+------------------
+|      prerequest-scripts |               0 |               0 |
+--------------------------+-----------------+------------------
+|              assertions |              70 |               1 |
+---------------------------------------------------------------
+| total run duration: 1009ms                                  |
+---------------------------------------------------------------
+| total data received: 716B (approx)                          |
+---------------------------------------------------------------
+| average response time: 1ms [min: 1ms, max: 14ms, s.d.: 2ms] |
+---------------------------------------------------------------
+
+[31m  # [39m[31m failure        [39m[31m detail                                                  [39m
+[90m    [39m[90m                [39m[90m                                                         [39m
+ 1.  AssertionError  result EXPECTED_WRONG_RESULT
+                     expected 'OK' to deeply equal 'EXPECTED_WRONG_RESULT'
+                     at assertion:1 in test-script
+                     inside "01 Successful registration / POST registration"
+Process exit code: 1
